@@ -14,7 +14,7 @@ This project is a Python desktop app for Spot The Difference Game.
 From the project root:
 
 ```bash
-python3 -m pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 ## Run the App
@@ -22,5 +22,5 @@ python3 -m pip install -r requirements.txt
 From the project root:
 
 ```bash
-python3 main.py
+python main.py
 ```

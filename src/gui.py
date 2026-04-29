@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
+from PIL import Image, ImageTk
 
 class SpotTheDifferenceApp(tk.Tk):
     """GUI for Spot The Difference Game."""
@@ -9,6 +10,10 @@ class SpotTheDifferenceApp(tk.Tk):
         self.title("Spot the Difference")
         self.geometry("980x560")
         self.minsize(860, 500)
+        self._left_image_label: tk.Label | None = None
+        self._right_image_label: tk.Label | None = None
+        self._left_photo: ImageTk.PhotoImage | None = None
+        self._right_photo: ImageTk.PhotoImage | None = None
         self._build_ui()
 
     def _build_ui(self) -> None:
@@ -35,19 +40,20 @@ class SpotTheDifferenceApp(tk.Tk):
         left_col = tk.Frame(image_row)
         left_col.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 6))
         tk.Label(left_col, text="Original (reference)").pack()
-        tk.Label(
+        self._left_image_label = tk.Label(
             left_col,
             text="No image loaded",
             bg="#2b2b2b",
             fg="#efefef",
             width=46,
             height=20,
-        ).pack(fill=tk.BOTH, expand=True)
+        )
+        self._left_image_label.pack(fill=tk.BOTH, expand=True)
 
         right_col = tk.Frame(image_row)
         right_col.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(6, 0))
         tk.Label(right_col, text="Modified (click area)").pack()
-        tk.Label(
+        self._right_image_label = tk.Label(
             right_col,
             text="No image loaded",
             bg="#2b2b2b",
@@ -55,7 +61,8 @@ class SpotTheDifferenceApp(tk.Tk):
             width=46,
             height=20,
             cursor="crosshair",
-        ).pack(fill=tk.BOTH, expand=True)
+        )
+        self._right_image_label.pack(fill=tk.BOTH, expand=True)
 
     def _load_image(self) -> None:
         path = filedialog.askopenfilename(
@@ -65,8 +72,42 @@ class SpotTheDifferenceApp(tk.Tk):
                 ("All files", "*.*"),
             ],
         )
-        if path:
-            messagebox.showinfo("Spot The Difference", f"Selected image:\n{path}")
+        if not path:
+            return
+
+        try:
+            image = Image.open(path).convert("RGB")
+        except OSError as exc:
+            messagebox.showerror("Spot The Difference", f"Could not load image:\n{exc}")
+            return
+
+        if self._left_image_label is None or self._right_image_label is None:
+            return
+
+        self.update_idletasks()
+        left_size = (
+            max(80, self._left_image_label.winfo_width()),
+            max(80, self._left_image_label.winfo_height()),
+        )
+        right_size = (
+            max(80, self._right_image_label.winfo_width()),
+            max(80, self._right_image_label.winfo_height()),
+        )
+
+        left_preview = self._fit_image(image, left_size)
+        right_preview = self._fit_image(image, right_size)
+
+        self._left_photo = ImageTk.PhotoImage(left_preview)
+        self._right_photo = ImageTk.PhotoImage(right_preview)
+
+        self._left_image_label.config(image=self._left_photo, text="")
+        self._right_image_label.config(image=self._right_photo, text="")
+
+    @staticmethod
+    def _fit_image(image: Image.Image, box_size: tuple[int, int]) -> Image.Image:
+        out = image.copy()
+        out.thumbnail(box_size, Image.Resampling.LANCZOS)
+        return out
 
     def _reveal_differences(self) -> None:
         messagebox.showinfo("Spot The Difference", "Reveal differences is not implemented yet.")
