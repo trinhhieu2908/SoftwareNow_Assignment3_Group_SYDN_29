@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import filedialog, messagebox
 
 class SpotTheDifferenceApp(tk.Tk):
     """GUI for Spot The Difference Game."""
@@ -15,10 +15,10 @@ class SpotTheDifferenceApp(tk.Tk):
         controls = tk.Frame(self, padx=10, pady=10)
         controls.pack(fill=tk.X)
 
-        tk.Button(controls, text="Load Image", command=lambda: None).pack(
-            side=tk.LEFT, padx=(0, 8),
+        tk.Button(controls, text="Load Image", command=self._load_image).pack(
+            side=tk.LEFT, padx=(0, 8)
         )
-        tk.Button(controls, text="Reveal", command=lambda: None).pack(
+        tk.Button(controls, text="Reveal", command=self._reveal_differences).pack(
             side=tk.LEFT
         )
 
@@ -34,7 +34,7 @@ class SpotTheDifferenceApp(tk.Tk):
 
         left_col = tk.Frame(image_row)
         left_col.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 6))
-        tk.Label(left_col, text="Original image").pack()
+        tk.Label(left_col, text="Original (reference)").pack()
         tk.Label(
             left_col,
             text="No image loaded",
@@ -46,7 +46,7 @@ class SpotTheDifferenceApp(tk.Tk):
 
         right_col = tk.Frame(image_row)
         right_col.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(6, 0))
-        tk.Label(right_col, text="Modified image").pack()
+        tk.Label(right_col, text="Modified (click area)").pack()
         tk.Label(
             right_col,
             text="No image loaded",
@@ -56,6 +56,20 @@ class SpotTheDifferenceApp(tk.Tk):
             height=20,
             cursor="crosshair",
         ).pack(fill=tk.BOTH, expand=True)
+
+    def _load_image(self) -> None:
+        path = filedialog.askopenfilename(
+            title="Choose image",
+            filetypes=[
+                ("Images", "*.jpg *.jpeg *.png *.bmp"),
+                ("All files", "*.*"),
+            ],
+        )
+        if path:
+            messagebox.showinfo("Spot The Difference", f"Selected image:\n{path}")
+
+    def _reveal_differences(self) -> None:
+        messagebox.showinfo("Spot The Difference", "Reveal differences is not implemented yet.")
 
 
 def run_app() -> None:
