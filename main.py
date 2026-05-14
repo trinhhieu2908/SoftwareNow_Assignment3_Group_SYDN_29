@@ -1,4 +1,14 @@
-from src.gui import run_app
+
+# Entry point for the HIT137 Assignment 3 – Spot the Difference game.
+
+from app import SpotTheDifferenceApp
+
+
+def main() -> None:
+    """Create the application window and start the Tkinter event loop."""
+    app = SpotTheDifferenceApp()
+    app.mainloop()
+
 
 if __name__ == "__main__":
-    run_app()
+    main()
