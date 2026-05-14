@@ -24,3 +24,11 @@ From the project root:
 ```bash
 python main.py
 ```
+
+## Run the Unittest
+
+From the project root:
+
+```bash
+python -m unittest discover -s tests -v
+```
