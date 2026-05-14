@@ -9,10 +9,10 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
-from image_processor import ImageProcessor
-from game_state      import GameState
-from difference      import DifferenceRegion
-from constants       import (
+from .image_processor import ImageProcessor
+from .game_state      import GameState
+from .difference      import DifferenceRegion
+from .constants       import (
     NUM_DIFFERENCES, MAX_MISTAKES,
     CANVAS_MAX_W, CANVAS_MAX_H,
     CIRCLE_FOUND, CIRCLE_REVEALED,
@@ -82,14 +82,14 @@ class SpotTheDifferenceApp(tk.Tk):
         # Reveal is disabled until an image is loaded
         self._reveal_btn = tk.Button(
             frame, text="Reveal All",
-            bg=self._C_REVEAL_BTN, fg="white", activebackground="#c96a2a",
+            bg=self._C_REVEAL_BTN, fg="black", activebackground="#c96a2a",
             command=self._on_reveal, state="disabled", **btn_kw,
         )
         self._reveal_btn.pack(side="right", padx=8)
 
         tk.Button(
             frame, text="Load Image",
-            bg=self._C_LOAD_BTN, fg="white", activebackground="#27ae60",
+            bg=self._C_LOAD_BTN, fg="black", activebackground="#27ae60",
             command=self._on_load, **btn_kw,
         ).pack(side="right", padx=4)
 

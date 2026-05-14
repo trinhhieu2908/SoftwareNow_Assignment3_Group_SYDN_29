@@ -13,7 +13,7 @@ import random
 import cv2
 import numpy as np
 
-from constants import PATCH_W, PATCH_H, OVERLAP_MARGIN, CLICK_TOLERANCE
+from .constants import PATCH_W, PATCH_H, OVERLAP_MARGIN, CLICK_TOLERANCE
 
 
 class DifferenceRegion(abc.ABC):

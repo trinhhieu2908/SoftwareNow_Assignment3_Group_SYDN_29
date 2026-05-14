@@ -5,8 +5,8 @@
 # The GUI never reads or changes these values directly.
 # It just calls methods here and lets this class decide what changes.
 
-from difference import DifferenceRegion
-from constants  import MAX_MISTAKES, NUM_DIFFERENCES
+from .difference import DifferenceRegion
+from .constants  import MAX_MISTAKES, NUM_DIFFERENCES
 
 
 class GameState:

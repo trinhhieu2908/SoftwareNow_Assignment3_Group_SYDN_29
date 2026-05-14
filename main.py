@@ -1,7 +1,7 @@
 
 # Entry point for the HIT137 Assignment 3 – Spot the Difference game.
 
-from app import SpotTheDifferenceApp
+from src.app import SpotTheDifferenceApp
 
 
 def main() -> None:

@@ -8,11 +8,11 @@ import cv2
 import numpy as np
 from PIL import Image, ImageTk
 
-from constants import (
+from .constants import (
     NUM_DIFFERENCES, PATCH_W, PATCH_H,
     EDGE_MARGIN, CANVAS_MAX_W, CANVAS_MAX_H,
 )
-from difference import (
+from .difference import (
     DifferenceRegion,
     ColourShiftDifference,
     BlurDifference,
