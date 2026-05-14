@@ -1,7 +1,7 @@
 This project is a Python desktop app for Spot The Difference Game.
 
 - Entry point: `main.py`
-- GUI implementation: `src/gui.py`
+- GUI implementation: `src/app.py`
 - GUI toolkit: Tkinter (desktop UI)
 
 ## Prerequisites
