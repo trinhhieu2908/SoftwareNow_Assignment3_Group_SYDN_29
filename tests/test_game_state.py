@@ -1,12 +1,30 @@
+import sys
+from types import SimpleNamespace
 import unittest
+
+try:
+    import cv2 as _real_cv2
+    HAS_CV2 = True
+except ModuleNotFoundError as exc:
+    if exc.name == "cv2":
+        HAS_CV2 = False
+    else:
+        raise
+
+_missing_cv2 = object()
+_previous_cv2 = sys.modules.get("cv2", _missing_cv2)
+if not HAS_CV2:
+    sys.modules["cv2"] = SimpleNamespace()
 
 try:
     from src.difference import BrightnessDifference
     from src.game_state import GameState
-except ModuleNotFoundError as exc:
-    if exc.name == "cv2":
-        raise unittest.SkipTest("OpenCV is not installed") from exc
-    raise
+finally:
+    if not HAS_CV2:
+        if _previous_cv2 is _missing_cv2:
+            sys.modules.pop("cv2", None)
+        else:
+            sys.modules["cv2"] = _previous_cv2
 
 
 class GameStateTests(unittest.TestCase):
@@ -60,6 +78,14 @@ class GameStateTests(unittest.TestCase):
 
         self.assertIsNone(hit)
 
+    def test_find_hit_returns_none_when_click_misses_everything(self):
+        state = GameState()
+        state.new_round(self.make_differences())
+
+        hit = state.find_hit(200, 200)
+
+        self.assertIsNone(hit)
+
     def test_register_mistake_locks_after_maximum_mistakes(self):
         state = GameState()
         state.new_round(self.make_differences())
@@ -69,6 +95,31 @@ class GameStateTests(unittest.TestCase):
         self.assertTrue(state.register_mistake())
         self.assertTrue(state.locked)
         self.assertEqual(state.mistakes_remaining(), 0)
+
+    def test_mistakes_remaining_decreases_after_wrong_clicks(self):
+        state = GameState()
+        state.new_round(self.make_differences())
+
+        self.assertEqual(state.mistakes_remaining(), 3)
+        state.register_mistake()
+        self.assertEqual(state.mistakes_remaining(), 2)
+
+    def test_force_lock_locks_round_without_adding_mistake(self):
+        state = GameState()
+        state.new_round(self.make_differences())
+
+        state.force_lock()
+
+        self.assertTrue(state.locked)
+        self.assertEqual(state.mistakes, 0)
+
+    def test_unfound_returns_only_differences_not_found_yet(self):
+        state = GameState()
+        differences = self.make_differences()
+        state.new_round(differences)
+        state.register_find(differences[0])
+
+        self.assertEqual(state.unfound(), [differences[1]])
 
     def test_all_found_is_true_only_after_every_difference_is_found(self):
         state = GameState()
@@ -80,6 +131,16 @@ class GameStateTests(unittest.TestCase):
         state.register_find(differences[1])
 
         self.assertTrue(state.all_found())
+
+    def test_new_round_replaces_old_differences(self):
+        state = GameState()
+        old_differences = self.make_differences()
+        new_differences = [BrightnessDifference(200, 200, width=20, height=20)]
+        state.new_round(old_differences)
+
+        state.new_round(new_differences)
+
+        self.assertEqual(state.unfound(), new_differences)
 
 
 if __name__ == "__main__":
